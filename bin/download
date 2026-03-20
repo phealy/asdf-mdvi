@@ -8,6 +8,15 @@ plugin_dir=$(dirname "$(dirname "$current_script_path")")
 # shellcheck source=./lib/utils.bash
 source "${plugin_dir}/lib/utils.bash"
 
+# asdf plugin test passes "latest" literally without resolving it
+if [ "$ASDF_INSTALL_VERSION" = "latest" ]; then
+	ASDF_INSTALL_VERSION=$(list_all_versions | sort_versions | tail -n1 | xargs echo)
+	if [ -z "$ASDF_INSTALL_VERSION" ]; then
+		fail "Could not resolve latest version"
+	fi
+	echo "* Resolved latest to $ASDF_INSTALL_VERSION"
+fi
+
 mkdir -p "$ASDF_DOWNLOAD_PATH"
 
 release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.gz"
